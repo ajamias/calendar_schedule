@@ -27,18 +27,22 @@ int main(){
         printf("Enter end time busy: ");
         scanf("%s", p1.end_times[i]);
     }
-    /*
+    
         for (i=0;i<p2.block_amount;i++){
         printf("Enter start time busy: ");
         scanf("%s", *p2.start_times);
         printf("Enter end time busy: ");
         scanf("%s", *p2.end_times);
     }
-    */
+    
     for (i=0;i<p1.block_amount;i++){
         printf("%s\n", p1.start_times[i]);
         printf("%s\n", p1.end_times[i]);
     }
+    for (i=0;i<p2.block_amount;i++){
+    printf("%s\n", p2.start_times[i]);
+    printf("%s\n", p2.end_times[i]);
+}
 
 
     return 0;
