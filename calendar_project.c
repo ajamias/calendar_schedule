@@ -104,12 +104,11 @@ int main(){
     char day[10];
     FILE *fptr;
 
-    fptr = fopen("austin_sch.txt","r");
+    fptr = fopen("austin_mon.txt","r");
     if (fptr == NULL){
         printf("Didn't work\n");
     }
-
-
+    printf("this is weird\n");
     /*
     printf("What day is it: ");
     scanf("%s", day);
