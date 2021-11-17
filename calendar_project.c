@@ -108,8 +108,7 @@ int main(){
     if (fptr == NULL){
         printf("Didn't work\n");
     }
-
-
+    printf("this is weird\n");
     /*
     printf("What day is it: ");
     scanf("%s", day);
