@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <strings.h>
 
 typedef struct{
     char name[10],
@@ -99,7 +100,44 @@ void get_meet_times(person *p1, person *p2){
 
 int main(){
     person p1, p2;
-    int i, j;
+    int i, j, count = 0;
+    char day[10];
+    FILE *fptr;
+
+    fptr = fopen("austin_sch.txt","r");
+    if (fptr == NULL){
+        printf("Didn't work\n");
+    }
+
+
+    /*
+    printf("What day is it: ");
+    scanf("%s", day);
+
+    if (strcmp(day, "sunday\0") == 0){
+        printf("It's sunday\n");
+    } else if (strcmp(day, "monday\0") == 0){
+        printf("It's monday\n");
+    } else if (strcmp(day, "tuesday\0") == 0){
+        printf("It's tuesday\n");
+    } else if (strcmp(day, "wednesday\0") == 0){
+        printf("It's wednesday\n");
+    } else if (strcmp(day, "thursday\0") == 0){
+        printf("It's thursday\n");
+    } else if (strcmp(day, "friday\0") == 0){
+        printf("It's friday\n");
+    } else if (strcmp(day, "saturday\0") == 0){
+        printf("It's saturday\n");
+    }
+
+    
+    while(fscanf(fptr, "%i:%i%c\n", &hr[count], &min[count], &ampm[count]) != EOF){
+        printf("File read %i:%i%c\n", hr[count], min[count], ampm[count]);
+    }
+    */
+
+    fclose(fptr);
+    printf("success?\n");
 
     // Get names of people
     get_name(&p1);
