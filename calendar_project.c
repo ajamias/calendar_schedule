@@ -121,12 +121,13 @@ void get_meet_times(FILE *fptr1, FILE *fptr2, person *p1, person *p2){
 int main(){
     person p1, p2, p;
     int i, j, count = 0, hr[20], min[20];
-    char day[10], fname[20], fname1[20], fname2[20], choice, ampm[20];
+    char fname[20], fname1[20], fname2[20], choice, ampm[20];
     FILE *fptr, *fptr1, *fptr2;
 
     printf("Chose an option:\nr = read file\nu = update/create file\nc = compare times\n");
     scanf("%c", &choice);
-    if (choice == 'r'){
+
+    if (choice == 'r'){ // ---- Reading a file ----
         get_name(&p);
         strcpy(fname, p.name);
         strcat(fname, ".txt");
@@ -141,55 +142,54 @@ int main(){
             count++;
         }
         fclose(fptr);
-    } else if (choice == 'u'){
-        // ---- Creating a new file and writing to it ----
+
+    } else if (choice == 'u'){ // ---- Creating a new file and writing to it ----
+
         // Get names of people
         get_name(&p);
         strcpy(fname, p.name);
         strcat(fname, ".txt");
-
         fptr = fopen(fname, "w");
         if (fptr == NULL){
             printf("file couldn't open\n");
         }
+
         // Get number of blocks
         get_blocks(&p);
 
         // Get the starting and ending times of each block
         get_start_end_times(fptr, &p);
-        printf("success?\n");
         fclose(fptr);
-    } else if (choice == 'c'){
 
+    } else if (choice == 'c'){ // ---- Comparing file times ----
+
+        // Get and open files
         printf("File 1: \n");
         get_name(&p1);
         printf("File 2: \n");
         get_name(&p2);
-
         strcpy(fname1, p1.name);
         strcat(fname1, ".txt");
         strcpy(fname2, p2.name);
         strcat(fname2, ".txt");
-
         fptr1 = fopen(fname1,"r");
         fptr2 = fopen(fname2,"r");
-
         if ((fptr1 == NULL) || (fptr2 == NULL)){
             printf("a file couldn't open\n");
-            fclose(fptr1);
-            fclose(fptr2);
         } else {
+
             // Convert hours to total minutes of the day
             tothrs2totmin(fptr1, &p1);
             tothrs2totmin(fptr2, &p2);
             rewind(fptr1);
             rewind(fptr2);
+
             // Display which times both people share free
             get_meet_times(fptr1, fptr2, &p1, &p2);
-
-            fclose(fptr1);
-            fclose(fptr2);
         }
+
+        fclose(fptr1);
+        fclose(fptr2);
     }
     return 0;
 }
