@@ -109,33 +109,43 @@ void get_meet_times(person *p1, person *p2){
 
 int main(){
     person p1, p2, p;
-    int i, j, count = 0;
-    char day[10], fname[20], fname1[20], fname2[20], choice;
+    int i, j, count = 0, hr[20], min[20];
+    char day[10], fname[20], fname1[20], fname2[20], choice, ampm[20];
     FILE *fptr, *fptr1, *fptr2;
 
-    printf("Chose an option:\nu = update/create file\nc = compare times\n");
+    printf("Chose an option:\nr = read file\nu = update/create file\nc = compare times\n");
     scanf("%c", &choice);
+    if (choice == 'r'){
+        get_name(&p);
+        strcpy(fname, p.name);
+        strcat(fname, ".txt");
 
-    if (choice == 'u'){
+        fptr = fopen(fname, "r");
+        if (fptr == NULL){
+            printf("file couldn't open\n");
+        }
+
+        while(fscanf(fptr, "%i:%i%c\n", &hr[count], &min[count], &ampm[count]) != EOF){
+            printf("File read: %i:%i%c\n", hr[count], min[count], ampm[count]);
+            count++;
+        }
+        fclose(fptr);
+    } else if (choice == 'u'){
         // ---- Creating a new file and writing to it ----
-
         // Get names of people
         get_name(&p);
         strcpy(fname, p.name);
         strcat(fname, ".txt");
 
-        fptr = fopen(fname,"w");
+        fptr = fopen(fname, "w");
         if (fptr == NULL){
             printf("file couldn't open\n");
         }
-
         // Get number of blocks
         get_blocks(&p);
 
         // Get the starting and ending times of each block
         get_start_end_times(fptr, &p);
-
-
         printf("success?\n");
         fclose(fptr);
     } else if (choice == 'c'){
@@ -157,12 +167,16 @@ int main(){
             // Convert hours to total minutes of the day
             tothrs2totmin(fptr1, &p1);
             tothrs2totmin(fptr2, &p2);
-
+            for (i=0; i<3; i++){
+                printf("%i %i\n", p1.tsm[i], p1.tem[i]);
+            }
             // Display which times both people share free
-            printf("what the fuck\n");
             get_meet_times(&p1, &p2);
-            printf("oh ok\n");
-            fclose(fptr);
+            printf("what the fuck\n");
+
+
+            fclose(fptr1);
+            fclose(fptr2);
         }
     }
 
