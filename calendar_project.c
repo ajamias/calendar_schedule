@@ -49,14 +49,45 @@ void tothrs2totmin(person *p){
         }
         (*p).tsm[i] = (*p).tsh[i] * 60 + (*p).start_min[i];
         (*p).tem[i] = (*p).teh[i] * 60 + (*p).end_min[i];
-        printf("starting minute: %i\n", (*p).tsm[i]);
-        printf("ending minute: %i\n", (*p).tem[i]);
+    }
+}
+
+
+void get_meet_times(person *p1, person *p2){
+    int max_meets = (*p1).block_amount, i, j;
+    if ((*p1).block_amount < (*p2).block_amount){
+        max_meets = (*p2).block_amount;
+    }
+    int meet_start_min[max_meets], meet_end_min[max_meets], scount = 0, ecount = 0;
+    for (i=0;i<(*p1).block_amount;i++){
+        for (j=0;j<(*p2).block_amount;j++){
+            if (((*p1).tsm[i] <= (*p2).tsm[j]) && ((*p1).tem[i] >= (*p2).tsm[j]) || (((*p1).tsm[i] >= (*p2).tsm[j]) && ((*p1).tsm[i] <= (*p2).tem[j]))){
+                if ((*p1).tsm[i] > (*p2).tsm[j]){
+                    meet_start_min[scount] = (*p1).tsm[i];
+                    scount++;
+                } else {
+                    meet_start_min[scount] = (*p2).tsm[j];
+                    scount++;
+                }
+                if ((*p1).tem[i] < (*p2).tem[j]){
+                    meet_end_min[ecount] = (*p1).tem[i];
+                    ecount++;
+                } else {
+                    meet_end_min[ecount] = (*p2).tem[j];
+                    ecount++;
+                }
+            }
+        }
+    }
+    // TIMES CONFLICT AT THE LATEST START AND THE EARLIEST END TIME
+    for (i=0;i<scount;i++){
+        printf("You can meet between %i:%i and %i:%i\n", meet_start_min[i]/60, meet_start_min[i]%60, meet_end_min[i]/60, meet_end_min[i]%60);
     }
 }
 
 int main(){
     person p1, p2;
-    int i;
+    int i, j;
 
     // Get names of people
     get_name(&p1);
@@ -72,32 +103,16 @@ int main(){
 
     // Get the starting and ending times of each block
     get_start_end_times(&p1);
-//    get_start_end_times(&p2);
+    get_start_end_times(&p2);
 
-    // Print the starting and ending times
-    for (i=0;i<p1.block_amount;i++){
-        printf("%i:%i%c\n", p1.start_hr[i], p1.start_min[i], p1.start_ampm[i]);
-        printf("%i:%i%c\n", p1.end_hr[i], p1.end_min[i], p1.end_ampm[i]);
-    }
-    /*
-    for (i=0;i<p2.block_amount;i++){
-        printf("%i:%i%c\n", p2.start_hr[i], p2.start_min[i], p2.start_ampm[i]);
-        printf("%i:%i%c\n", p2.end_hr[i], p2.end_min[i], p2.end_ampm[i]);
-    }
-    */
 
     // Convert hours to total minutes of the day
     tothrs2totmin(&p1);
-//    tothrs2totmin(&p2);
-/*
-    p2.tsm[0] = 750;
-    p2.tem[0] = 810;
-    if ((p1.tsm[0] <= p2.tsm[0]) && ((p1.tem[0] <= p2.tem[0]) && (p1.tem[0] >= p2.tsm[0]))){
-        printf("They conflict\n");
-    } else {
-        printf("They don't conflict\n");
-    }
-*/
+    tothrs2totmin(&p2);
+
+    // Display which times both people share free
+    get_meet_times(&p1, &p2);
+
 
     return 0;
 }
