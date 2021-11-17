@@ -22,6 +22,7 @@ void get_name(person *p){
     scanf("%s", (*p).name);
 }
 
+
 void get_blocks(person *p){
     printf("How many blocks does %s have: ", (*p).name);
     scanf("%i", &(*p).block_amount);
@@ -57,7 +58,6 @@ void tothrs2totmin(FILE *fptr, person *p){
 
         (*p).tsm[i] = (*p).tsh[i] * 60 + (*p).start_min[i];
         (*p).tem[i] = (*p).teh[i] * 60 + (*p).end_min[i];
-        printf("start %i end %i\n", (*p).tsm[i], (*p).tem[i]);
         i++;
     }
 }
@@ -114,7 +114,7 @@ void get_meet_times(FILE *fptr1, FILE *fptr2, person *p1, person *p2){
             ehr = meet_end_min[i]/60 - 12;
             eampm = 'p';
         }
-        printf("You can meet between %i:%i%c and %i:%i%c\n", shr, meet_start_min[i]%60, sampm, ehr, meet_end_min[i]%60, eampm);
+        printf("You can meet between %i:%i%cm and %i:%i%cm\n", shr, meet_start_min[i]%60, sampm, ehr, meet_end_min[i]%60, eampm);
     }
 }
 
@@ -138,7 +138,7 @@ int main(){
         }
 
         while(fscanf(fptr, "%i:%i%c\n", &hr[count], &min[count], &ampm[count]) != EOF){
-            printf("File read: %i:%i%c\n", hr[count], min[count], ampm[count]);
+            printf("File line %i: %i:%i%c\n", count+1, hr[count], min[count], ampm[count]);
             count++;
         }
         fclose(fptr);
