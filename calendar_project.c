@@ -46,7 +46,7 @@ void tothrs2totmin(FILE *fptr, person *p){
         fscanf(fptr, "%i:%i%c\n", &(*p).end_hr[i], &(*p).end_min[i], &(*p).end_ampm[i]);
 
         (*p).tsh[i] = (*p).start_hr[i];
-        if (((*p).start_ampm[i] == 'p') && ((*p).end_hr[i] != 12)){
+        if (((*p).start_ampm[i] == 'p') && ((*p).start_hr[i] != 12)){
             (*p).tsh[i] = (*p).start_hr[i] + 12;
         }
 
@@ -57,6 +57,7 @@ void tothrs2totmin(FILE *fptr, person *p){
 
         (*p).tsm[i] = (*p).tsh[i] * 60 + (*p).start_min[i];
         (*p).tem[i] = (*p).teh[i] * 60 + (*p).end_min[i];
+        printf("start %i end %i\n", (*p).tsm[i], (*p).tem[i]);
         i++;
     }
 }
@@ -78,7 +79,6 @@ void get_meet_times(FILE *fptr1, FILE *fptr2, person *p1, person *p2){
     }
     int meet_start_min[max_meets], meet_end_min[max_meets], scount = 0, ecount = 0;
 
-    // TURN THIS INTO A WHILE LOOP UNTIL SCANF REACHES EOF
     for (i=0;i<count1/2;i++){
         for (j=0;j<count2/2;j++){
             if (((*p1).tsm[i] <= (*p2).tsm[j]) && ((*p1).tem[i] >= (*p2).tsm[j]) || (((*p1).tsm[i] >= (*p2).tsm[j]) && ((*p1).tsm[i] <= (*p2).tem[j]))){
