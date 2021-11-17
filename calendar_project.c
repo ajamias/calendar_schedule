@@ -61,16 +61,26 @@ void tothrs2totmin(FILE *fptr, person *p){
     }
 }
 
-void get_meet_times(person *p1, person *p2){
-    int max_meets = (*p1).block_amount, i, j, shr, ehr, sampm, eampm;
-    if ((*p1).block_amount < (*p2).block_amount){
-        max_meets = (*p2).block_amount;
+void get_meet_times(FILE *fptr1, FILE *fptr2, person *p1, person *p2){
+    int i, j, shr, ehr, sampm, eampm, max_meets, count1 = 0, count2 = 0, hr1[20], min1[20], hr2[20], min2[20];
+    char ampm1[20], ampm2[20];
+    while(fscanf(fptr1, "%i:%i%c\n", &hr1[count1], &min1[count1], &ampm1[count1]) != EOF){
+        count1++;
+    }
+    while(fscanf(fptr2, "%i:%i%c\n", &hr2[count2], &min2[count2], &ampm2[count2]) != EOF){
+        count2++;
+    }
+
+    if (count1 > count2){
+        max_meets = count1/2;
+    } else {
+        max_meets = count2/2;
     }
     int meet_start_min[max_meets], meet_end_min[max_meets], scount = 0, ecount = 0;
 
     // TURN THIS INTO A WHILE LOOP UNTIL SCANF REACHES EOF
-    for (i=0;i<(*p1).block_amount;i++){
-        for (j=0;j<(*p2).block_amount;j++){
+    for (i=0;i<count1/2;i++){
+        for (j=0;j<count2/2;j++){
             if (((*p1).tsm[i] <= (*p2).tsm[j]) && ((*p1).tem[i] >= (*p2).tsm[j]) || (((*p1).tsm[i] >= (*p2).tsm[j]) && ((*p1).tsm[i] <= (*p2).tem[j]))){
                 if ((*p1).tsm[i] > (*p2).tsm[j]){
                     meet_start_min[scount] = (*p1).tsm[i];
@@ -89,6 +99,7 @@ void get_meet_times(person *p1, person *p2){
             }
         }
     }
+
     // TIMES CONFLICT AT THE LATEST START AND THE EARLIEST END TIME
     for (i=0;i<scount;i++){
         shr = meet_start_min[i]/60;
@@ -149,16 +160,20 @@ int main(){
         printf("success?\n");
         fclose(fptr);
     } else if (choice == 'c'){
+
         printf("File 1: \n");
         get_name(&p1);
         printf("File 2: \n");
         get_name(&p2);
+
         strcpy(fname1, p1.name);
         strcat(fname1, ".txt");
         strcpy(fname2, p2.name);
         strcat(fname2, ".txt");
+
         fptr1 = fopen(fname1,"r");
         fptr2 = fopen(fname2,"r");
+
         if ((fptr1 == NULL) || (fptr2 == NULL)){
             printf("a file couldn't open\n");
             fclose(fptr1);
@@ -167,24 +182,14 @@ int main(){
             // Convert hours to total minutes of the day
             tothrs2totmin(fptr1, &p1);
             tothrs2totmin(fptr2, &p2);
-            for (i=0; i<3; i++){
-                printf("%i %i\n", p1.tsm[i], p1.tem[i]);
-            }
+            rewind(fptr1);
+            rewind(fptr2);
             // Display which times both people share free
-            get_meet_times(&p1, &p2);
-            printf("what the fuck\n");
-
+            get_meet_times(fptr1, fptr2, &p1, &p2);
 
             fclose(fptr1);
             fclose(fptr2);
         }
     }
-
-    /*
-    while(fscanf(fptr, "%i:%i%c\n", &hr[count], &min[count], &ampm[count]) != EOF){
-        printf("File read %i:%i%c\n", hr[count], min[count], ampm[count]);
-    }
-    */
-
     return 0;
 }
