@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <strings.h>
 
 typedef struct{
     char name[10],
