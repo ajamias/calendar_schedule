@@ -102,19 +102,22 @@ void get_meet_times(FILE *fptr1, FILE *fptr2, person *p1, person *p2){
 
     // TIMES CONFLICT AT THE LATEST START AND THE EARLIEST END TIME
     for (i=0;i<scount;i++){
-        shr = meet_start_min[i]/60;
-        sampm = 'a';
-        ehr = meet_end_min[i]/60;
-        eampm = 'a';
-        if (meet_start_min[i]/60 > 12){
-            shr = meet_start_min[i]/60 - 12;
-            sampm = 'p';
+        // IF THE DIFFERENCE BETWEEN THE END AND START IS <= 15, DONT INCLUDE IT
+        if (meet_end_min[i] - meet_start_min[i] > 15){
+            shr = meet_start_min[i]/60;
+            sampm = 'a';
+            ehr = meet_end_min[i]/60;
+            eampm = 'a';
+            if (meet_start_min[i]/60 > 12){
+                shr = meet_start_min[i]/60 - 12;
+                sampm = 'p';
+            }
+                if (meet_end_min[i]/60 > 12){
+                ehr = meet_end_min[i]/60 - 12;
+                eampm = 'p';
+            }
+            printf("You can meet between %i:%i%cm and %i:%i%cm\n", shr, meet_start_min[i]%60, sampm, ehr, meet_end_min[i]%60, eampm);
         }
-            if (meet_end_min[i]/60 > 12){
-            ehr = meet_end_min[i]/60 - 12;
-            eampm = 'p';
-        }
-        printf("You can meet between %i:%i%cm and %i:%i%cm\n", shr, meet_start_min[i]%60, sampm, ehr, meet_end_min[i]%60, eampm);
     }
 }
 
