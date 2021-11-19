@@ -22,6 +22,10 @@ void get_name(person *p){
     scanf("%s", (*p).name);
 }
 
+char conv_day(char day_input[]){
+    
+}
+
 
 void get_blocks(person *p){
     printf("How many blocks does %s have: ", (*p).name);
@@ -124,7 +128,7 @@ void get_meet_times(FILE *fptr1, FILE *fptr2, person *p1, person *p2){
 int main(){
     person p1, p2, p;
     int i, j, count = 0, hr[20], min[20];
-    char fname[20], fname1[20], fname2[20], choice, ampm[20];
+    char fname[20], fname1[20], fname2[20], choice, ampm[20], day[10];
     FILE *fptr, *fptr1, *fptr2;
 
     printf("Chose an option:\nr = read file\nu = update/create file\nc = compare times\n");
@@ -132,6 +136,11 @@ int main(){
 
     if (choice == 'r'){ // ---- Reading a file ----
         get_name(&p);
+
+        printf("What day is it: ");
+        scanf("%s", day);
+        printf("It's %s!\n", day);
+
         strcpy(fname, p.name);
         strcat(fname, ".txt");
 
