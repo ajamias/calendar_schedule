@@ -33,20 +33,7 @@ void get_blocks(person *p){
     scanf("%i", &(*p).block_amount);
 }
 
-void get_start_end_times(FILE *fptr, person *p){
-    int i;
-    printf("Times for %s\n", (*p).name);
-    for (i=0;i<(*p).block_amount;i++){
-        printf("Start time #%i: ", i+1);
-        scanf("%i:%i%c", &(*p).start_hr[i], &(*p).start_min[i], &(*p).start_ampm[i]);
-        fprintf(fptr, "%i:%i%c\n", (*p).start_hr[i], (*p).start_min[i], (*p).start_ampm[i]);
-        printf("End time #%i: ", i+1);
-        scanf("%i:%i%c", &(*p).end_hr[i], &(*p).end_min[i], &(*p).end_ampm[i]);
-        fprintf(fptr, "%i:%i%c\n", (*p).end_hr[i], (*p).end_min[i], (*p).end_ampm[i]);
-    }
-}
-
-void test_get_times(FILE *fptr, int block_amount){
+void get_times(FILE *fptr, int block_amount){
     int i, start_hr[20], start_min[20], end_hr[20], end_min[20];
     char start_ampm[20], end_ampm[20];
     for (i=0;i<block_amount;i++){
@@ -144,7 +131,7 @@ void get_meet_times(FILE *fptr1, FILE *fptr2, person *p1, person *p2){
 int main(){
     person p1, p2, p;
     int i, j, count = 0, hr[20], min[20], blocks;
-    char fname[20], fname1[20], fname2[20], choice, ampm[20], day[10], name[10], file_name[20];
+    char fname[20], fn1[20], fn2[20], choice, ampm[20], day[10], name[10], n1[10], n2[10];
     FILE *fptr, *fptr1, *fptr2;
 
     printf("Chose an option:\nr = read file\nu = update/create file\nc = compare times\n");
@@ -183,25 +170,25 @@ int main(){
         printf("How many blocks does %s have: ", name);
         scanf("%i", &blocks);
         printf("Times for %s\n", name);
-        test_get_times(fptr, blocks);
+        get_times(fptr, blocks);
         fclose(fptr);
     } else if (choice == 'c'){ // ---- Comparing file times ----
-    /*
         // Get and open files
         printf("File 1: \n");
-        get_name(&p1);
+        get_name(n1);
         printf("File 2: \n");
-        get_name(&p2);
-        strcpy(fname1, p1.name);
-        strcat(fname1, ".txt");
-        strcpy(fname2, p2.name);
-        strcat(fname2, ".txt");
-        fptr1 = fopen(fname1,"r");
-        fptr2 = fopen(fname2,"r");
+        get_name(n2);
+        strcpy(fn1, n1);
+        strcat(fn1, ".txt");
+        strcpy(fn2, n2);
+        strcat(fn2, ".txt");
+        fptr1 = fopen(fn1,"r");
+        fptr2 = fopen(fn2,"r");
         if ((fptr1 == NULL) || (fptr2 == NULL)){
             printf("a file couldn't open\n");
         } else {
-
+            printf("both files opened\n");
+            /*
             // Convert hours to total minutes of the day
             tothrs2totmin(fptr1, &p1);
             tothrs2totmin(fptr2, &p2);
@@ -210,11 +197,12 @@ int main(){
 
             // Display which times both people share free
             get_meet_times(fptr1, fptr2, &p1, &p2);
+            */
         }
 
         fclose(fptr1);
         fclose(fptr2);
-        */
+
     }
     return 0;
 }
