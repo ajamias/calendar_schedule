@@ -2,12 +2,10 @@
 #include <string.h>
 
 typedef struct{
-    char name[10],
-    start_ampm[20],
+    char start_ampm[20],
     end_ampm[20];
 
-    int block_amount,
-    start_min[20],
+    int start_min[20],
     start_hr[20],
     end_min[20],
     end_hr[20],
@@ -28,10 +26,6 @@ char conv_day(char day_input[]){
 }
 */
 
-void get_blocks(person *p){
-    printf("How many blocks does %s have: ", (*p).name);
-    scanf("%i", &(*p).block_amount);
-}
 
 void get_times(FILE *fptr, int block_amount){
     int i, start_hr[20], start_min[20], end_hr[20], end_min[20];
@@ -129,50 +123,49 @@ void get_meet_times(FILE *fptr1, FILE *fptr2, person *p1, person *p2){
 }
 
 int main(){
-    person p1, p2, p;
     int i, j, count = 0, hr[20], min[20], blocks;
-    char fname[20], fn1[20], fn2[20], choice, ampm[20], day[10], name[10], n1[10], n2[10];
-    FILE *fptr, *fptr1, *fptr2;
+    char fn1[20], fn2[20], choice, ampm[20], day[10], n1[10], n2[10];
+    FILE *fptr1, *fptr2;
 
     printf("Chose an option:\nr = read file\nu = update/create file\nc = compare times\n");
     scanf("%c", &choice);
 
     if (choice == 'r'){ // ---- Reading a file ----
-        get_name(name);
-        printf("name is %s\n", name);
+        get_name(n1);
+        printf("name is %s\n", n1);
         /*
         printf("What day is it: ");
         scanf("%s", day);
         printf("It's %s!\n", day);
         */
-        strcpy(fname, name);
-        strcat(fname, ".txt");
+        strcpy(fn1, n1);
+        strcat(fn1, ".txt");
 
-        fptr = fopen(fname, "r");
-        if (fptr == NULL){
+        fptr1 = fopen(fn1, "r");
+        if (fptr1 == NULL){
             printf("file couldn't open\n");
         }
 
-        while(fscanf(fptr, "%i:%i%c\n", &hr[count], &min[count], &ampm[count]) != EOF){
+        while(fscanf(fptr1, "%i:%i%c\n", &hr[count], &min[count], &ampm[count]) != EOF){
             printf("File line %i: %i:%i%c\n", count+1, hr[count], min[count], ampm[count]);
             count++;
         }
-        fclose(fptr);
+        fclose(fptr1);
     } else if (choice == 'u'){ // ---- Creating a new file and writing to it ----
-        char fname[20];
-        get_name(name);
-        strcat(fname, name);
-        strcat(fname, ".txt");
-        fptr = fopen(fname, "w");
-        if (fptr == NULL){
+        get_name(n1);
+        strcat(fn1, n1);
+        strcat(fn1, ".txt");
+        fptr1 = fopen(fn1, "w");
+        if (fptr1 == NULL){
             printf("file couldn't open\n");
         }
-        printf("How many blocks does %s have: ", name);
+        printf("How many blocks does %s have: ", n1);
         scanf("%i", &blocks);
-        printf("Times for %s\n", name);
-        get_times(fptr, blocks);
-        fclose(fptr);
+        printf("Times for %s\n", n1);
+        get_times(fptr1, blocks);
+        fclose(fptr1);
     } else if (choice == 'c'){ // ---- Comparing file times ----
+        person p1, p2;
         // Get and open files
         printf("File 1: \n");
         get_name(n1);
@@ -188,7 +181,6 @@ int main(){
             printf("a file couldn't open\n");
         } else {
             printf("both files opened\n");
-            /*
             // Convert hours to total minutes of the day
             tothrs2totmin(fptr1, &p1);
             tothrs2totmin(fptr2, &p2);
@@ -197,7 +189,6 @@ int main(){
 
             // Display which times both people share free
             get_meet_times(fptr1, fptr2, &p1, &p2);
-            */
         }
 
         fclose(fptr1);
