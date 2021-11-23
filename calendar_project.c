@@ -9,9 +9,7 @@ typedef struct{
     start_hr[20],
     end_min[20],
     end_hr[20],
-    tsh[20],
-    tsm[20],    // tsh = true starting hour
-    teh[20],    // tem = true ending minute
+    tsm[20],
     tem[20];
 } person;
 
@@ -41,22 +39,22 @@ void get_times(FILE *fptr, int block_amount){
 }
 
 void tothrs2totmin(FILE *fptr, person *p){
-    int i = 0;
+    int i = 0, tsh[20], teh[20];
     while(fscanf(fptr, "%i:%i%c\n", &(*p).start_hr[i], &(*p).start_min[i], &(*p).start_ampm[i]) != EOF){
         fscanf(fptr, "%i:%i%c\n", &(*p).end_hr[i], &(*p).end_min[i], &(*p).end_ampm[i]);
 
-        (*p).tsh[i] = (*p).start_hr[i];
+        tsh[i] = (*p).start_hr[i];
         if (((*p).start_ampm[i] == 'p') && ((*p).start_hr[i] != 12)){
-            (*p).tsh[i] = (*p).start_hr[i] + 12;
+            tsh[i] = (*p).start_hr[i] + 12;
         }
 
-        (*p).teh[i] = (*p).end_hr[i];
+        teh[i] = (*p).end_hr[i];
         if (((*p).end_ampm[i] == 'p') && ((*p).end_hr[i] != 12)){
-            (*p).teh[i] = (*p).end_hr[i] + 12;
+            teh[i] = (*p).end_hr[i] + 12;
         }
 
-        (*p).tsm[i] = (*p).tsh[i] * 60 + (*p).start_min[i];
-        (*p).tem[i] = (*p).teh[i] * 60 + (*p).end_min[i];
+        (*p).tsm[i] = tsh[i] * 60 + (*p).start_min[i];
+        (*p).tem[i] = teh[i] * 60 + (*p).end_min[i];
         i++;
     }
 }
