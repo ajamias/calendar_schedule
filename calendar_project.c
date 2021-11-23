@@ -144,11 +144,11 @@ int main(){
         fptr1 = fopen(fn1, "r");
         if (fptr1 == NULL){
             printf("file couldn't open\n");
-        }
-
-        while(fscanf(fptr1, "%i:%i%c\n", &hr[count], &min[count], &ampm[count]) != EOF){
-            printf("File line %i: %i:%i%c\n", count+1, hr[count], min[count], ampm[count]);
-            count++;
+        } else {
+            while(fscanf(fptr1, "%i:%i%c\n", &hr[count], &min[count], &ampm[count]) != EOF){
+                printf("File line %i: %i:%i%c\n", count+1, hr[count], min[count], ampm[count]);
+                count++;
+            }
         }
         fclose(fptr1);
     } else if (choice == 'u'){ // ---- Creating a new file and writing to it ----
@@ -158,11 +158,12 @@ int main(){
         fptr1 = fopen(fn1, "w");
         if (fptr1 == NULL){
             printf("file couldn't open\n");
+        } else {
+            printf("How many blocks does %s have: ", n1);
+            scanf("%i", &blocks);
+            printf("Times for %s\n", n1);
+            get_times(fptr1, blocks);
         }
-        printf("How many blocks does %s have: ", n1);
-        scanf("%i", &blocks);
-        printf("Times for %s\n", n1);
-        get_times(fptr1, blocks);
         fclose(fptr1);
     } else if (choice == 'c'){ // ---- Comparing file times ----
         person p1, p2;
