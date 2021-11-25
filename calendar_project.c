@@ -160,8 +160,8 @@ int main(){
                 fscanf(fptr1, "%i:%i%c\n", &hr[i], &min[i], &ampm[i]);
                 printf("File line %i: %i:%i%c\n", i+1, hr[i], min[i], ampm[i]);
             }
+            fclose(fptr1);
         }
-        fclose(fptr1);
     } else if (choice == 'u'){ // ---- Creating a new file and writing to it ----
         fptr1 = get_fname(file_name1, get_name(name1), get_day(day), 'w');
         if (fptr1 == NULL){
@@ -171,15 +171,13 @@ int main(){
             scanf("%i", &blocks);
             printf("\nTimes for %s:\n", name1);
             get_times(fptr1, blocks);
+            fclose(fptr1);
         }
-        fclose(fptr1);
     } else if (choice == 'c'){ // ---- Comparing file times ----
         // Get and open files
         fptr1 = get_fname(file_name1, get_name(name1), get_day(day), 'r');
         fptr2 = get_fname(file_name2, get_name(name2), day, 'r');
-        if ((fptr1 == NULL) || (fptr2 == NULL)){
-            printf("a file couldn't open\n");
-        } else {
+        if ((fptr1 != NULL) || (fptr2 != NULL)){
             // Convert hours to total minutes of the day
             tothrs2totmin(fptr1, tsm1, tem1);
             tothrs2totmin(fptr2, tsm2, tem2);
@@ -187,11 +185,18 @@ int main(){
 
             // Display which times both people share free
             get_meet_times(fptr1, fptr2, tsm1, tem1, tsm2, tem2);
-        }
 
-        fclose(fptr1);
-        fclose(fptr2);
-
+            fclose(fptr1);
+            fclose(fptr2);
+        } else if ((fptr1 == NULL) || (fptr2 == NULL)){
+            printf("a file couldn't open\n");
+            if (fptr1 != NULL){
+                fclose(fptr1);
+            }
+            if (fptr2 != NULL){
+                fclose(fptr2);
+            }
+        } 
     } else {
         printf("Invalid choice\n");
     }
