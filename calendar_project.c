@@ -15,13 +15,13 @@ typedef struct{
 } person;
 
 char* get_name(char *name){
-    printf("Enter file name: ");
+    printf("\nEnter file name: ");
     scanf("%s", name);
     return name;
 }
 
 char* get_day(char *day){
-    printf("What day is it: ");
+    printf("\nWhat day is it: ");
     scanf("%s", day);
     if (strcmp(day, "sunday") == 0){
         strcpy(day, "sun");
@@ -44,12 +44,12 @@ char* get_day(char *day){
     return day;
 }
 
-void get_fname(char *fname, char *name, char *day){
+FILE* get_fname(char *fname, char *name, char *day, char choice){
     strcpy(fname, name);
     strcat(fname, day);
     strcat(fname, ".txt");
+    return fopen(fname, &choice);
 }
-
 
 void get_times(FILE *fptr, int block_amount){
     int i, start_hr[20], start_min[20], end_hr[20], end_min[20];
@@ -64,7 +64,7 @@ void get_times(FILE *fptr, int block_amount){
     }
 }
 
-void tothrs2totmin(FILE *fptr, person *p){
+void tothrs2totmin(FILE *fptr, person *p, int *tsm, int *tem){
     int i = 0, tsh[20], teh[20];
     while(fscanf(fptr, "%i:%i%c\n", &(*p).start_hr[i], &(*p).start_min[i], &(*p).start_ampm[i]) != EOF){
         fscanf(fptr, "%i:%i%c\n", &(*p).end_hr[i], &(*p).end_min[i], &(*p).end_ampm[i]);
@@ -79,15 +79,13 @@ void tothrs2totmin(FILE *fptr, person *p){
             teh[i] = (*p).end_hr[i] + 12;
         }
 
-        (*p).tsm[i] = tsh[i] * 60 + (*p).start_min[i];
-        (*p).tem[i] = teh[i] * 60 + (*p).end_min[i];
+        tsm[i] = tsh[i] * 60 + (*p).start_min[i];
+        tem[i] = teh[i] * 60 + (*p).end_min[i];
         i++;
     }
 }
 
-
-
-void get_meet_times(FILE *fptr1, FILE *fptr2, person *p1, person *p2){
+void get_meet_times(FILE *fptr1, FILE *fptr2, person *p1, person *p2, int* tsm, int *tem){
     int i, j, shr, ehr, sampm, eampm, max_meets, count1 = 0, count2 = 0, hr1[20], min1[20], hr2[20], min2[20];
     char ampm1[20], ampm2[20];
     while(fscanf(fptr1, "%i:%i%c\n", &hr1[count1], &min1[count1], &ampm1[count1]) != EOF){
@@ -106,19 +104,19 @@ void get_meet_times(FILE *fptr1, FILE *fptr2, person *p1, person *p2){
 
     for (i=0;i<count1/2;i++){
         for (j=0;j<count2/2;j++){
-            if (((*p1).tsm[i] <= (*p2).tsm[j]) && ((*p1).tem[i] >= (*p2).tsm[j]) || (((*p1).tsm[i] >= (*p2).tsm[j]) && ((*p1).tsm[i] <= (*p2).tem[j]))){
-                if ((*p1).tsm[i] > (*p2).tsm[j]){
-                    meet_start_min[scount] = (*p1).tsm[i];
+            if ((tsm[i] <= tsm[j]) && (tem[i] >= tsm[j]) || ((tsm[i] >= tsm[j]) && (tsm[i] <= tem[j]))){
+                if (tsm[i] > tsm[j]){
+                    meet_start_min[scount] = tsm[i];
                     scount++;
                 } else {
-                    meet_start_min[scount] = (*p2).tsm[j];
+                    meet_start_min[scount] = tsm[j];
                     scount++;
                 }
-                if ((*p1).tem[i] < (*p2).tem[j]){
-                    meet_end_min[ecount] = (*p1).tem[i];
+                if (tem[i] < tem[j]){
+                    meet_end_min[ecount] = tem[i];
                     ecount++;
                 } else {
-                    meet_end_min[ecount] = (*p2).tem[j];
+                    meet_end_min[ecount] = tem[j];
                     ecount++;
                 }
             }
@@ -126,6 +124,7 @@ void get_meet_times(FILE *fptr1, FILE *fptr2, person *p1, person *p2){
     }
 
     // TIMES CONFLICT AT THE LATEST START AND THE EARLIEST END TIME
+    printf("\nYou can meet between:\n");
     for (i=0;i<scount;i++){
         // IF THE DIFFERENCE BETWEEN THE END AND START IS <= 15, DONT INCLUDE IT
         if (meet_end_min[i] - meet_start_min[i] > 15){
@@ -141,13 +140,13 @@ void get_meet_times(FILE *fptr1, FILE *fptr2, person *p1, person *p2){
                 ehr = meet_end_min[i]/60 - 12;
                 eampm = 'p';
             }
-            printf("You can meet between %i:%i%cm and %i:%i%cm\n", shr, meet_start_min[i]%60, sampm, ehr, meet_end_min[i]%60, eampm);
+            printf("%i:%i%cm and %i:%i%cm\n", shr, meet_start_min[i]%60, sampm, ehr, meet_end_min[i]%60, eampm);
         }
     }
 }
 
 int main(){
-    int i, j, count = 0, hr[20], min[20], blocks;
+    int i, j, count = 0, hr[20], min[20], blocks, tsm[20], tem[20];
     char file_name1[20], file_name2[20], choice, ampm[20], name1[10], name2[10], day[10];
     FILE *fptr1, *fptr2;
 
@@ -155,9 +154,7 @@ int main(){
     scanf("%c", &choice);
 
     if (choice == 'r'){ // ---- Reading a file ----
-        get_fname(file_name1, get_name(name1), get_day(day));
-
-        fptr1 = fopen(file_name1, "r");
+        fptr1 = get_fname(file_name1, get_name(name1), get_day(day), 'r');
         if (fptr1 == NULL){
             printf("file couldn't open\n");
         } else {
@@ -168,9 +165,7 @@ int main(){
         }
         fclose(fptr1);
     } else if (choice == 'u'){ // ---- Creating a new file and writing to it ----
-        get_fname(file_name1, get_name(name1), get_day(day));
-
-        fptr1 = fopen(file_name1, "w");
+        fptr1 = get_fname(file_name1, get_name(name1), get_day(day), 'w');
         if (fptr1 == NULL){
             printf("file couldn't open\n");
         } else {
@@ -183,23 +178,19 @@ int main(){
     } else if (choice == 'c'){ // ---- Comparing file times ----
         person p1, p2;
         // Get and open files
-        get_day(day);
-        get_fname(file_name1, get_name(name1), day);
-        get_fname(file_name2, get_name(name2), day);
-        fptr1 = fopen(file_name1,"r");
-        fptr2 = fopen(file_name2,"r");
+        fptr1 = get_fname(file_name1, get_name(name1), get_day(day), 'r');
+        fptr2 = get_fname(file_name2, get_name(name2), day, 'r');
         if ((fptr1 == NULL) || (fptr2 == NULL)){
             printf("a file couldn't open\n");
         } else {
-            printf("both files opened\n");
             // Convert hours to total minutes of the day
-            tothrs2totmin(fptr1, &p1);
-            tothrs2totmin(fptr2, &p2);
+            tothrs2totmin(fptr1, &p1, tsm, tem);
+            tothrs2totmin(fptr2, &p2, tsm, tem);
             rewind(fptr1);
             rewind(fptr2);
 
             // Display which times both people share free
-            get_meet_times(fptr1, fptr2, &p1, &p2);
+            get_meet_times(fptr1, fptr2, &p1, &p2, tsm, tem);
         }
 
         fclose(fptr1);
