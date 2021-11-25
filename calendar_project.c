@@ -15,7 +15,7 @@ typedef struct{
 } person;
 
 char* get_name(char *name){
-    printf("\nEnter file name: ");
+    printf("Enter name of person: ");
     scanf("%s", name);
     return name;
 }
@@ -41,6 +41,7 @@ char* get_day(char *day){
         printf("Invalid day\n");
         return NULL;
     }
+    printf("\n");
     return day;
 }
 
@@ -49,6 +50,16 @@ FILE* get_fname(char *fname, char *name, char *day, char choice){
     strcat(fname, day);
     strcat(fname, ".txt");
     return fopen(fname, &choice);
+}
+
+int get_file_length(FILE *fptr){
+    int hr[20], min[20], count = 0;
+    char ampm[20];
+    while(fscanf(fptr, "%i:%i%c\n", &hr[count], &min[count], &ampm[count]) != EOF){
+        count++;
+    }
+    rewind(fptr);
+    return count;
 }
 
 void get_times(FILE *fptr, int block_amount){
@@ -61,6 +72,7 @@ void get_times(FILE *fptr, int block_amount){
         printf("End time #%i: ", i+1);
         scanf("%i:%i%c", &end_hr[i], &end_min[i], &end_ampm[i]);
         fprintf(fptr, "%i:%i%c\n", end_hr[i], end_min[i], end_ampm[i]);
+        printf("\n");
     }
 }
 
@@ -86,14 +98,8 @@ void tothrs2totmin(FILE *fptr, person *p, int *tsm, int *tem){
 }
 
 void get_meet_times(FILE *fptr1, FILE *fptr2, person *p1, person *p2, int* tsm, int *tem){
-    int i, j, shr, ehr, sampm, eampm, max_meets, count1 = 0, count2 = 0, hr1[20], min1[20], hr2[20], min2[20];
+    int i, j, start_hr, end_hr, start_ampm, end_ampm, max_meets, count1 = get_file_length(fptr1), count2 = get_file_length(fptr2);
     char ampm1[20], ampm2[20];
-    while(fscanf(fptr1, "%i:%i%c\n", &hr1[count1], &min1[count1], &ampm1[count1]) != EOF){
-        count1++;
-    }
-    while(fscanf(fptr2, "%i:%i%c\n", &hr2[count2], &min2[count2], &ampm2[count2]) != EOF){
-        count2++;
-    }
 
     if (count1 > count2){
         max_meets = count1/2;
@@ -128,19 +134,19 @@ void get_meet_times(FILE *fptr1, FILE *fptr2, person *p1, person *p2, int* tsm, 
     for (i=0;i<scount;i++){
         // IF THE DIFFERENCE BETWEEN THE END AND START IS <= 15, DONT INCLUDE IT
         if (meet_end_min[i] - meet_start_min[i] > 15){
-            shr = meet_start_min[i]/60;
-            sampm = 'a';
-            ehr = meet_end_min[i]/60;
-            eampm = 'a';
+            start_hr = meet_start_min[i]/60;
+            start_ampm = 'a';
+            end_hr = meet_end_min[i]/60;
+            end_ampm = 'a';
             if (meet_start_min[i]/60 > 12){
-                shr = meet_start_min[i]/60 - 12;
-                sampm = 'p';
+                start_hr = meet_start_min[i]/60 - 12;
+                start_ampm = 'p';
             }
-                if (meet_end_min[i]/60 > 12){
-                ehr = meet_end_min[i]/60 - 12;
-                eampm = 'p';
+            if (meet_end_min[i]/60 > 12){
+                end_hr = meet_end_min[i]/60 - 12;
+                end_ampm = 'p';
             }
-            printf("%i:%i%cm and %i:%i%cm\n", shr, meet_start_min[i]%60, sampm, ehr, meet_end_min[i]%60, eampm);
+            printf("%i:%i%cm and %i:%i%cm\n", start_hr, meet_start_min[i]%60, start_ampm, end_hr, meet_end_min[i]%60, end_ampm);
         }
     }
 }
@@ -152,15 +158,16 @@ int main(){
 
     printf("Chose an option:\nr = read file\nu = update/create file\nc = compare times\n");
     scanf("%c", &choice);
+    printf("\n");
 
     if (choice == 'r'){ // ---- Reading a file ----
         fptr1 = get_fname(file_name1, get_name(name1), get_day(day), 'r');
         if (fptr1 == NULL){
             printf("file couldn't open\n");
         } else {
-            while(fscanf(fptr1, "%i:%i%c\n", &hr[count], &min[count], &ampm[count]) != EOF){
-                printf("File line %i: %i:%i%c\n", count+1, hr[count], min[count], ampm[count]);
-                count++;
+            for (i=0;i<get_file_length(fptr1);i++){
+                fscanf(fptr1, "%i:%i%c\n", &hr[i], &min[i], &ampm[i]);
+                printf("File line %i: %i:%i%c\n", i+1, hr[i], min[i], ampm[i]);
             }
         }
         fclose(fptr1);
@@ -171,7 +178,7 @@ int main(){
         } else {
             printf("How many blocks does %s have: ", name1);
             scanf("%i", &blocks);
-            printf("Times for %s\n", name1);
+            printf("\nTimes for %s:\n", name1);
             get_times(fptr1, blocks);
         }
         fclose(fptr1);
