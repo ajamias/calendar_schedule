@@ -101,7 +101,7 @@ void get_meet_times(FILE *fptr1, FILE *fptr2, int* tsm1, int *tem1, int *tsm2, i
 
     for (i=0;i<count1/2;i++){
         for (j=0;j<count2/2;j++){
-            if ((tsm1[i] <= tsm2[j]) && (tem1[i] >= tsm1[j]) || ((tsm1[i] >= tsm2[j]) && (tsm1[i] <= tem2[j]))){
+            if (((tsm1[i] <= tsm2[j]) && (tem1[i] >= tsm2[j])) || ((tsm1[i] >= tsm2[j]) && (tsm1[i] <= tem2[j]))){
                 if (tsm1[i] > tsm2[j]){
                     meet_start_min[scount] = tsm1[i];
                     scount++;
@@ -181,6 +181,7 @@ int main(){
             // Convert hours to total minutes of the day
             tothrs2totmin(fptr1, tsm1, tem1);
             tothrs2totmin(fptr2, tsm2, tem2);
+            rewind(fptr1);
             rewind(fptr2);
 
             // Display which times both people share free
